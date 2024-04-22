@@ -14,7 +14,7 @@ from django.views import generic
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 
-from .forms import UserRegisterForm, ProfileForm
+from .forms import UserRegisterForm, ProfileForm, CreationForm
 from .models import Project
 
 
@@ -22,6 +22,7 @@ def get_bar_context(request):
     menu = []
     if request.user.is_authenticated:
         menu.append(dict(title=str(request.user), url=reverse('profile', kwargs={'stat': 'reading'})))
+        menu.append(dict(title='Создать новый проект', url=reverse('project_creation')))
         menu.append(dict(title='Выйти', url=reverse('logout')))
     else:
         pass
@@ -55,7 +56,7 @@ def index_page(request):
     return render(request, 'index.html', context)
 
 
-@login_required()
+@login_required
 def profile(request, stat):
     user = request.user
 
@@ -102,3 +103,27 @@ def profile(request, stat):
     }
 
     return render(request, 'profile.html', context)
+
+
+@login_required
+def project_creation(request):
+    if request.method == 'POST':
+        form = CreationForm(request.POST)
+        if form.is_valid():
+            project = form.save(commit=False)
+            project.author = request.user
+            project.save()
+            return redirect(reverse('project_detail', kwargs={'project_id': str(project.id)}))
+    else:
+        form = CreationForm()
+        context = {
+            'bar': get_bar_context(request),
+            'form': form,
+        }
+        return render(request, 'project_creation.html', context)
+
+
+@login_required
+def project_detail(request, project_id):
+    project = Project.objects.filter(id=int(project_id))
+    tasks = project.task.all()

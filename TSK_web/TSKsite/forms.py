@@ -40,7 +40,7 @@ class UserRegisterForm(UserCreationForm):
 
 class ProfileForm(forms.Form):
     username = forms.CharField(
-        label='Логин',
+        label='Username',
         max_length=100,
         min_length=4,
     )
@@ -74,3 +74,16 @@ class ProfileForm(forms.Form):
             self.fields['email'].widget.attrs.update({"placeholder": 'Ваш новый email'})
             self.fields['first_name'].widget.attrs.update({"placeholder": 'Ваше имя'})
             self.fields['last_name'].widget.attrs.update({"placeholder": 'Ваша фамилия'})
+
+
+class CreationForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ['name', 'description']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(CreationForm, self).__init__(*args, **kwargs)
