@@ -8,10 +8,10 @@ class Task(models.Model):
 
     name = models.CharField(max_length=150)
     description = models.CharField(max_length=1000)
-    author = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    assigned = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    author = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='author_task')
+    assigned = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='assigned_task')
     done = models.BooleanField(default=0)
-    who_done = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    who_done = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='who_done_task')
     approved = models.ForeignKey(to=User, on_delete=models.CASCADE)
     deadline = models.DateTimeField
 
@@ -22,6 +22,6 @@ class Project(models.Model):
 
     name = models.CharField(max_length=150, default='Untitled project')
     description = models.CharField(max_length=1000)
-    author = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    members = models.ManyToManyField(to=User)
-    tasks = models.ManyToManyField(to=User)
+    author = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='author_project')
+    members = models.ManyToManyField(to=User, related_name='members_project')
+    tasks = models.ManyToManyField(to=User, related_name='tasks_project')
