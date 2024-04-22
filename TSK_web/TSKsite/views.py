@@ -14,17 +14,17 @@ from django.views import generic
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 
-from .forms import UserRegisterForm
+from .forms import UserRegisterForm, ProfileForm
+from .models import Project
 
 
 def get_bar_context(request):
     menu = []
     if request.user.is_authenticated:
-        #menu.append(dict(title=str(request.user), url=reverse('profile', kwargs={'stat': 'reading'})))
-        menu.append(dict(title='Обратная связь', url=reverse('complaints')))
+        menu.append(dict(title=str(request.user), url=reverse('profile', kwargs={'stat': 'reading'})))
         menu.append(dict(title='Выйти', url=reverse('logout')))
     else:
-        menu.append(dict(title=str(request.user), url='#'))
+        pass
 
     return menu
 
@@ -50,6 +50,55 @@ def logout_view(request):
 def index_page(request):
     context = {
         'bar': get_bar_context(request),
-        'author': 'mother...', 'creation_date': '15.03.2024',
-        'user': request.user}
+        'user': request.user
+    }
     return render(request, 'index.html', context)
+
+
+@login_required()
+def profile(request, stat):
+    user = request.user
+
+    if user.is_anonymous:
+        return redirect('login')
+
+    projects = Project.objects.filter(author=user)
+
+    profile_info = {
+        'username': user.username,
+        'email': user.email,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+    }
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST)
+
+        if form.is_valid():
+            User.objects.filter(id=user.id).update(username=form.data["username"], email=form.data["email"],
+                                                   first_name=form.data["first_name"], last_name=form.data["last_name"])
+
+            return redirect(reverse('profile', kwargs={'stat': 'reading'}))
+    else:
+        form = ProfileForm(initial={
+            'username': user.username,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+        })
+
+    context = {
+        'bar': get_bar_context(request),
+        'username': user.username,
+        'email': user.email,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'project': projects,
+        'stat': stat,
+        'form': form,
+        'profile_info': profile_info,
+        'url': reverse('profile', kwargs={'stat': 'editing'}),
+        'url_back': reverse('profile', kwargs={'stat': 'reading'})
+    }
+
+    return render(request, 'profile.html', context)

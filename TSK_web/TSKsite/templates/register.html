@@ -1,17 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Index page</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+{% include 'bar.html' %}
+<style>
 
         body {
-            background-color: #ffffff;
-            font-family: Bahnschrift SemiBold, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding-top: 70px;
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+            padding-top: 50px;
             padding-bottom: 50px;
         }
 
@@ -35,6 +29,7 @@
             color: #ffffff;
             background-color: #b71523;
             border-color: #b71523;
+            display: block;
             margin: 0 auto;
         }
 
@@ -57,25 +52,16 @@
         h3 a:hover {
             text-decoration: none !important;
         }
-
-        .bold {
-            font-weight: bold;
-        }
     </style>
-</head>
-<body>
-{% include 'bar.html' %}
-<div class="container">
-    <h1>Welcome!!!</h1>
-
-    <p>Добро пожаловать на платформу ...</p>
-
-    <p class="bold">Почему выбрать именно нас?</p>
-
-    <p>...</p>
-    <p>Текущий пользователь: {{ user }}</p>
-    <a href="{% url 'login' %}"><button class="btn btn-first">Авторизация</button></a>
-    <a href="{% url 'register' %}"><button class="btn btn-first">Регистрация</button></a>
-</div>
-</body>
-</html>
+<div style="height: 40px;">
+  </div>
+{% block content %}
+    <h1>Регистрация на сайте</h1>
+    <div class="container">
+            <form method="post" action="{% url 'register' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-first">Зарегистрироваться</button>
+            </form>
+    </div>
+{% endblock %}

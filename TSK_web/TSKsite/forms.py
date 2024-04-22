@@ -9,10 +9,9 @@ class UserRegisterForm(UserCreationForm):
     """
     Переопределенная форма регистрации пользователей
     """
-    tg_username = forms.CharField(max_length=100)  # Add the tg_username field here
 
     class Meta(UserCreationForm.Meta):
-        fields = UserCreationForm.Meta.fields + ('email', 'first_name', 'last_name', 'tg_username')
+        fields = UserCreationForm.Meta.fields + ('email', 'first_name', 'last_name')
 
     def clean_email(self):
         """
@@ -37,3 +36,41 @@ class UserRegisterForm(UserCreationForm):
             self.fields['password1'].widget.attrs.update({"placeholder": 'Придумайте свой пароль'})
             self.fields['password2'].widget.attrs.update({"placeholder": 'Повторите придуманный пароль'})
             self.fields[field].widget.attrs.update({"class": "form-control", "autocomplete": "off"})
+
+
+class ProfileForm(forms.Form):
+    username = forms.CharField(
+        label='Логин',
+        max_length=100,
+        min_length=4,
+    )
+    email = forms.EmailField(
+        label='Email',
+        max_length=100,
+    )
+    first_name = forms.CharField(
+        label='Имя',
+        max_length=100,
+        min_length=2,
+        required=False,
+    )
+    last_name = forms.CharField(
+        label='Фамилия',
+        max_length=100,
+        min_length=2,
+        required=False,
+    )
+
+    class Meta:
+        field = ['username', 'email', 'first_name', 'last_name']
+
+    def __init__(self, *args, **kwargs):
+        """
+        Обновление стилей формы регистрации
+        """
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields['username'].widget.attrs.update({"placeholder": 'Ваш новый логин'})
+            self.fields['email'].widget.attrs.update({"placeholder": 'Ваш новый email'})
+            self.fields['first_name'].widget.attrs.update({"placeholder": 'Ваше имя'})
+            self.fields['last_name'].widget.attrs.update({"placeholder": 'Ваша фамилия'})
