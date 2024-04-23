@@ -23,8 +23,19 @@
             box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
         }
 
-        h1 {
-            color: #b71523;
+        h1{
+            color: #b71523 !important;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .gip_s {
+            color: #b71523 !important;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .gip_s:hover {
+            color: #850d1d !important;
             text-align: center;
             margin-bottom: 50px;
         }
@@ -83,13 +94,13 @@
     {% endif %}
     <div  class="container mt-4">
         <h2>Ваши проекты:</h2>
-        {% if routes %}
+        {% if projects.count %}
             <ul>
                 {% for project in projects %}
                     <li>
-                        <a href="#">{{ project.name }}</a><br>
-                        Лидер {{ project.author }}<br>
-                        Количество задач: {{ project.task.count }}<br>
+                        <b><a href="{% url 'project_detail' stat=stat project_id=project.id %}" class="gip_s">{{ project.name }}</a><br></b>
+                        <b>Лидер:</b> {{ project.author }}<br>
+                        <b>Количество задач:</b> {{ project.task.count }}<br>
                     </li>
                 {% endfor %}
             </ul>

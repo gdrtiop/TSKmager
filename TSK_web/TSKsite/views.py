@@ -15,7 +15,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 
 from .forms import UserRegisterForm, ProfileForm, CreationForm
-from .models import Project
+from .models import Project, Task
 
 
 def get_bar_context(request):
@@ -94,7 +94,7 @@ def profile(request, stat):
         'email': user.email,
         'first_name': user.first_name,
         'last_name': user.last_name,
-        'project': projects,
+        'projects': projects,
         'stat': stat,
         'form': form,
         'profile_info': profile_info,
@@ -113,7 +113,7 @@ def project_creation(request):
             project = form.save(commit=False)
             project.author = request.user
             project.save()
-            return redirect(reverse('project_detail', kwargs={'project_id': str(project.id)}))
+            return redirect(reverse('project_detail', kwargs={'stat': 'reading', 'project_id': str(project.id)}))
     else:
         form = CreationForm()
         context = {
@@ -124,6 +124,56 @@ def project_creation(request):
 
 
 @login_required
-def project_detail(request, project_id):
-    project = Project.objects.filter(id=int(project_id))
-    tasks = project.task.all()
+def project_detail(request, stat, project_id):
+    user = request.user
+    project = Project.objects.get(id=int(project_id))
+    tasks = project.tasks.all()
+
+    if request.method == 'POST' and stat == 'editing':
+        form = CreationForm(request.POST)
+
+        if form.is_valid():
+            Project.objects.filter(id=project.id).update(name=form.data["name"], description=form.data["description"])
+
+            task_prefixes = [key.split('-')[1] for key in request.POST if 'tasks-' in key]
+            for prefix in task_prefixes:
+                task_name = request.POST[f'tasks-{prefix}-text']
+                task_description = request.POST[f'tasks_description-{prefix}-text']
+
+                new_task = Task.objects.create(
+                    name=task_name,
+                    description=task_description,
+                    author=user,
+                    done=False
+                )
+                project.tasks.add(new_task)
+
+            return redirect(reverse('project_detail', kwargs={'stat': 'reading', 'project_id': str(project.id)}))
+    else:
+        form = CreationForm(initial={
+            'name': project.name,
+            'description': project.description,
+        })
+
+    context = {
+        'bar': get_bar_context(request),
+        'project': project,
+        'tasks': tasks,
+        'stat': stat,
+        'form': form
+    }
+    return render(request, 'project_detail.html', context)
+
+
+def update_task_cond(request, note_id):
+    if request.method == 'PATCH':
+        try:
+            task = Task.objects.get(id=note_id)
+            done = json.loads(request.body.decode('utf-8')).get('done')
+            task.done = done
+            task.save()
+            return JsonResponse({'status': 'success', 'message': 'Состояние задачи успешно обновлено'})
+        except Task.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Задача не найдена'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Неверный метод запроса'})

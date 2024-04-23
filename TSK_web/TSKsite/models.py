@@ -24,5 +24,5 @@ class Project(models.Model):
     description = models.CharField(max_length=1000)
     author = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='author_project')
     members = models.ManyToManyField(to=User, related_name='members_project')
-    tasks = models.ManyToManyField(to=User, related_name='tasks_project')
+    tasks = models.ManyToManyField(to=Task, related_name='tasks_project')
     liked = models.BooleanField(default=0)

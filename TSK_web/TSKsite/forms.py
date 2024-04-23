@@ -87,3 +87,4 @@ class CreationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(CreationForm, self).__init__(*args, **kwargs)
+        self.fields['description'].required = False
