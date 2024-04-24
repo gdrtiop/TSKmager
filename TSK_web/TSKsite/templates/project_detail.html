@@ -65,15 +65,15 @@
     {% if stat == "reading" %}
         <div class="container">
             <p><b>Description: </b>{{ project.description }}</p>
-            <a href="{% url 'project_detail' stat='editing' project_id=project.id %}"><button class ="btn btn-first">Редактировать</button></a>
             {% for task in tasks %}
-                <li>
-                <input type="checkbox" id="task_{{ task.id }}" onchange="toggleNoteDone('{{ task.id }}')" {% if task.done %}checked{% endif %}>
-                <label for="task_{{ task.id }}" {% if task.done %}style="text-decoration: line-through;"{% endif %}>
-                    {{ task.text }}
-                </label>
-            </li>
-        {% endfor %}
+                    <input type="checkbox" id="task_{{ task.id }}" onchange="toggleNoteDone('{{ task.id }}')" {% if task.done %}checked{% endif %}>
+                    <label for="task_{{ task.id }}" {% if task.done %}style="text-decoration: line-through;"{% endif %}>
+                        <p><b>{{ task.name }}:</b>{{ task.description }}</p>
+                    </label>
+                    <br>
+            {% endfor %}
+            <br>
+            <a href="{% url 'project_detail' stat='editing' project_id=project.id %}"><button class ="btn btn-first">Редактировать</button></a>
         </div>
     {% else %}
         <div class="container">
@@ -88,6 +88,7 @@
             </form>
         </div>
     {% endif %}
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
     function createTaskForm(prefix){
         const taskFormHtml = `
@@ -113,12 +114,14 @@
     function toggleNoteDone(taskID) {
         const checkbox = document.getElementById(`task_${taskID}`);
         const noteText = document.querySelector(`label[for="task_${taskID}"]`);
+        const description = noteText.dataset.description;
+        const name = noteText.dataset.name;
         const done = checkbox.checked;
 
         if (done) {
-            noteText.innerHTML = `<strike>${noteText.innerText}</strike>`;
+            noteText.innerHTML = `<strike>${name}</strike>`;
         } else {
-            noteText.innerHTML = noteText.innerText;
+            noteText.innerHTML = noteText.innerHTML;
         }
 
         const csrftoken = getCookie('csrftoken');

@@ -26,8 +26,8 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('register/', views.UserRegisterView.as_view(), name='register'),
     path('logout/', views.logout_view, name='logout'),
-    path('profile/<str:stat>', views.profile, name='profile'),
-    path('project_creation', views.project_creation, name='project_creation'),
-    path('project_detail/<str:stat>/<str:project_id>', views.project_detail, name='project_detail'),
-    path('update_task_cond', views.update_task_cond, name='update_task_cond')
+    path('profile/<str:stat>/', views.profile, name='profile'),
+    path('project_creation/', views.project_creation, name='project_creation'),
+    path('project_detail/<str:stat>/<str:project_id>/', views.project_detail, name='project_detail'),
+    path('update_task_cond/<int:task_id>/', views.update_task_cond, name='update_task_cond')
 ]

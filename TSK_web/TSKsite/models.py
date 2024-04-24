@@ -7,13 +7,13 @@ class Task(models.Model):
         db_table = 'Task'
 
     name = models.CharField(max_length=150)
-    description = models.CharField(max_length=1000)
+    description = models.CharField(max_length=1000, null=True)
     author = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='author_task')
-    assigned = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='assigned_task')
+    assigned = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='assigned_task', null=True)
     done = models.BooleanField(default=0)
-    who_done = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='who_done_task')
-    approved = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    deadline = models.DateTimeField
+    who_done = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='who_done_task', null=True)
+    approved = models.ForeignKey(to=User, on_delete=models.CASCADE, null=True)
+    deadline = models.DateTimeField(null=True)
 
 
 class Project(models.Model):

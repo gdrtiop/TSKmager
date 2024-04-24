@@ -100,7 +100,7 @@
                     <li>
                         <b><a href="{% url 'project_detail' stat=stat project_id=project.id %}" class="gip_s">{{ project.name }}</a><br></b>
                         <b>Лидер:</b> {{ project.author }}<br>
-                        <b>Количество задач:</b> {{ project.task.count }}<br>
+                        <b>Количество задач:</b> {{ project.tasks.count }}<br>
                     </li>
                 {% endfor %}
             </ul>

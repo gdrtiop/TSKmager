@@ -165,10 +165,11 @@ def project_detail(request, stat, project_id):
     return render(request, 'project_detail.html', context)
 
 
-def update_task_cond(request, note_id):
+@login_required
+def update_task_cond(request, task_id):
     if request.method == 'PATCH':
         try:
-            task = Task.objects.get(id=note_id)
+            task = Task.objects.get(id=task_id)
             done = json.loads(request.body.decode('utf-8')).get('done')
             task.done = done
             task.save()
