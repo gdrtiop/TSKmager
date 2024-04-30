@@ -5,7 +5,6 @@
     <title>Title</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-
         body {
             background-color: #f8f9fa;
             font-family: Arial, sans-serif;
@@ -58,6 +57,8 @@
         #messages-container {
             display: none;
         }
+
+
         .alert-error {
             background-color: #f8d7da;
             border-color: #f5c6cb;
@@ -78,16 +79,14 @@
             {% endfor %}
         {% endif %}
     </div>
-    {% include 'bar.html' %}
-    <div style="height: 40px;">
-    </div>
     <div class="container">
-    <h1>Создание нового проекта</h1>
-    <form method="post" action="{% url 'project_creation' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" class="btn btn-first" value="Создать">
-    </form>
+        <form method="post" action="/create_complaint">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" class="btn btn-first" value="Отправить">
+        </form>
+        <div style="height: 5px"></div>
+        <a href="{% url 'complaints' %}"><button class="btn btn-secondary">Назад</button></a>
     </div>
     <script>
         window.onload = function() {

@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Complaints</title>
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-
         body {
             background-color: #f8f9fa;
             font-family: Arial, sans-serif;
@@ -79,16 +78,36 @@
         {% endif %}
     </div>
     {% include 'bar.html' %}
-    <div style="height: 40px;">
-    </div>
-    <div class="container">
-    <h1>Создание нового проекта</h1>
-    <form method="post" action="{% url 'project_creation' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" class="btn btn-first" value="Создать">
-    </form>
-    </div>
+
+    {% if status == 0 %}
+        <h1>Ваши жалобы</h1>
+        <div style="text-align: center">
+            <a href="{% url 'create_complaint' %}"><input style="font-size: 1.5rem" type="button" value="Создать жалобу" class="btn btn-first"></a>
+        </div>
+        <br>
+    {% else %}
+        <h1>Жалобы пользователей</h1>
+    {% endif %}
+    <br>
+    {% for complaint in data %}
+        <div class="container">
+            <tr>
+                <th>Message: {{ complaint.text }}</th>
+                <br>
+                <th>User: {{ complaint.author }}</th>
+                <br>
+                <th>Time: {{ complaint.data }}</th>
+                <br>
+                <th>Answer: {{ complaint.answer }}</th>
+                <br>
+                {% if status == 1 and complaint.answer == '' %}
+                    <a href="{% url 'complaint_answer' complaint_id=complaint.id %}"><button class="btn btn-first">Ответить на жалобу</button></a>
+                {% endif %}
+                <br>
+            </tr>
+        </div>
+        <div style="height: 10px"></div>
+    {% endfor %}
     <script>
         window.onload = function() {
         const messagesContainer = document.getElementById('messages-container');

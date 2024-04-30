@@ -67,9 +67,31 @@
         button:hover {
             background-color: #850d1d;
         }
+        #messages-container {
+            display: none;
+        }
+
+
+        .alert-error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
     </style>
 </head>
 <body>
+    <div id="messages-container" class="messages-container">
+        {% if messages %}
+            {% for message in messages %}
+                <div id="message-{{ message.id }}" class="alert alert-{{ message.tags }}" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" aria-label="Close" onclick="closeMessage('{{ message.id }}')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
     {% include 'bar.html' %}
     <br>
     <br>
@@ -89,7 +111,19 @@
         <hr>
         {% endif %}
     </div>
+    <script>
+        window.onload = function() {
+        const messagesContainer = document.getElementById('messages-container');
+        messagesContainer.style.display = 'block';
 
+        const messages = messagesContainer.getElementsByClassName('alert');
+        Array.from(messages).forEach(message => {
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 5000);
+        });
+    };
+    </script>
 </body>
 
 </html>

@@ -26,3 +26,13 @@ class Project(models.Model):
     members = models.ManyToManyField(to=User, related_name='members_project')
     tasks = models.ManyToManyField(to=Task, related_name='tasks_project')
     liked = models.BooleanField(default=0)
+
+
+class Complaint(models.Model):
+    class Meta:
+        db_table = "Complaints"
+
+    text = models.CharField(max_length=1000, default='')
+    author = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    answer = models.CharField(max_length=1000, default='')
+    data = models.DateTimeField()

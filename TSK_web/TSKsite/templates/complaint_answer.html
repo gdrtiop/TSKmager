@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>User Routes</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Title</title>
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
 
         body {
@@ -89,62 +89,14 @@
             {% endfor %}
         {% endif %}
     </div>
-{% include 'bar.html' %}
-<div style="height: 40px;">
-  </div>
-    <h1>Ваш профиль:</h1>
-
-    {% if stat == "editing" %}
     <div class="container">
-        <form method="post" action="{{ url }}">
+        <form method="post" action="{% url 'complaint_answer' complaint_id=complaint.id %}">
             {% csrf_token %}
             {{ form.as_p }}
-            <input type="submit" class="btn btn-first" value="Применить">
+            <input type="submit" class="btn btn-first" value="Отправить">
         </form>
-        <div style="height: 5px;">
-        </div>
-        <a href="{% url 'profile' stat='reading' %}"><button class ="btn btn-secondary">Отменить</button></a>
-    </div>
-    {% else %}
-    <div class="container">
-        <p><b>Username:</b> {{ profile_info.username }}</p>
-        <p><b>Email:</b> {{ profile_info.email }}</p>
-        <p><b>First Name:</b> {{ profile_info.first_name }}</p>
-        <p><b>Last Name</b>: {{ profile_info.last_name }}</p>
-        <a href="{{url}}"><button class ="btn btn-first">Редактировать</button></a>
-    </div>
-    {% endif %}
-    <div  class="container mt-4">
-        <h2>Ваши проекты:</h2>
-        {% if projects.count %}
-            <ul>
-                {% for project in projects %}
-                    <li>
-                        <b><a href="{% url 'project_detail' stat=stat project_id=project.id %}" class="gip_s">{{ project.name }}</a><br></b>
-                        <b>Лидер:</b> {{ project.author }}<br>
-                        <b>Количество задач:</b> {{ project.tasks.count }}<br>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>У Вас пока нет проектов.</p>
-        {% endif %}
-    </div>
-    <div  class="container mt-4">
-        <h2>Ваши проекты как участника:</h2>
-        {% if projects_as_members.count %}
-            <ul>
-                {% for project in projects_as_members %}
-                    <li>
-                        <b><a href="{% url 'project_detail' stat=stat project_id=project.id %}" class="gip_s">{{ project.name }}</a><br></b>
-                        <b>Лидер:</b> {{ project.author }}<br>
-                        <b>Количество задач:</b> {{ project.tasks.count }}<br>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>У Вас пока нет таких проектов.</p>
-        {% endif %}
+        <div style="height: 5px"></div>
+        <a href="{% url 'complaints' %}"><button class="btn btn-secondary">Назад</button></a>
     </div>
     <script>
         window.onload = function() {

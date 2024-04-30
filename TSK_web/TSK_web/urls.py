@@ -29,5 +29,8 @@ urlpatterns = [
     path('profile/<str:stat>/', views.profile, name='profile'),
     path('project_creation/', views.project_creation, name='project_creation'),
     path('project_detail/<str:stat>/<str:project_id>/', views.project_detail, name='project_detail'),
-    path('update_task_cond/<int:task_id>/', views.update_task_cond, name='update_task_cond')
+    path('update_task_cond/<int:task_id>/', views.update_task_cond, name='update_task_cond'),
+    path('complaints', views.complaints, name='complaints'),
+    path('create_complaint', views.create_complaint, name='create_complaint'),
+    path('complaint_answer/<int:complaint_id>', views.complaint_answer, name='complaint_answer')
 ]
