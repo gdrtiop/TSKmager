@@ -29,7 +29,9 @@ TSKmager подходит для всех, кто хочет:
 
 ### Установка
 
-1. **Скачайте TSKmager:** https://github.com/gdrtiop/TSKmager.git
+#### Для Unix-подобных систем:
+
+1. **Скачайте TSKmager:** [TSKmager GitHub](https://github.com/gdrtiop/TSKmager.git)
 2. **Установите зависимости:** `pip install -r requirements.txt`
 3. **Перейдите в каталог TSK_web:** `cd TSK_web`
 4. **Выполните миграции базы данных:** `python3 manage.py makemigrations`
@@ -39,9 +41,20 @@ TSKmager подходит для всех, кто хочет:
 
 **Перейдите по ссылке, которая отобразится в консоли.**
 
-### Запуск и остановка сервера
+#### Для других систем:
 
-* **Запуск:** `python3 manage.py runserver`
+1. **Скачайте TSKmager:** [TSKmager GitHub](https://github.com/gdrtiop/TSKmager.git)
+2. **Установите зависимости:** `pip install -r requirements.txt`
+3. **Перейдите в каталог TSK_web:** `cd TSK_web`
+4. **Выполните миграции базы данных:** `python manage.py makemigrations`
+5. **Примените миграции:** `python manage.py migrate`
+6. **Создайте суперпользователя:** `python manage.py createsuperuser`
+7. **Запустите сервер:** `python manage.py runserver`
+
+**Перейдите по ссылке, которая отобразится в консоли.**
+
+### Остановка сервера
+
 * **Остановка:** `Ctrl + C`
 
 ### Преимущества
