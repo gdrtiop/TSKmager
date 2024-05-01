@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+            padding-top: 50px;
+            padding-bottom: 50px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            border-radius: 15px;
+            background-color: #ffffff;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #b71523;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .btn-first {
+            color: #ffffff;
+            background-color: #b71523;
+            border-color: #b71523;
+            margin: 0 auto;
+        }
+
+        .btn-first:hover {
+            color: #ffffff;
+            background-color: #850d1d;
+            border-color: #850d1d;
+        }
+
+        a {
+            text-decoration: none !important;
+        }
+
+
+        h3 a {
+            text-decoration: none !important;
+        }
+
+
+        h3 a:hover {
+            text-decoration: none !important;
+        }
+        .dodytask {
+            display: inline-block;
+        }
+        .completed {
+            text-decoration: line-through;
+        }
+        #messages-container {
+            display: none;
+        }
+
+
+        .alert-error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div id="messages-container" class="messages-container">
+        {% if messages %}
+            {% for message in messages %}
+                <div id="message-{{ message.id }}" class="alert alert-{{ message.tags }}" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" aria-label="Close" onclick="closeMessage('{{ message.id }}')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div style="height: 40px;"></div>
+    {% include 'bar.html' %}
+    <h1>{{ project.name }}</h1>
+    {% if stat == "reading" %}
+        <div class="container">
+            <p><b>Description: </b>{{ project.description }}</p>
+            {% for task in tasks %}
+                <input type="checkbox" id="task_{{ task.id }}" onclick="toggleNoteDone('{{ task.id }}')" {% if task.done %}checked{% endif %}>
+                <label for="task_{{ task.id }}">
+                <b id="name_tsk_{{ task.id }}" class="name {% if task.done %}completed{% endif %}"> {{ task.name }}:</b>
+                <div id="body_tsk_{{ task.id }}" class="dodytask body {% if task.done %}completed{% endif %}">{{ task.description }}</div>
+                </label>
+                {% if task.done %}
+                    <p id="who_done_tsk_{{ task.id }}" style="display: block;"><b>Выполнил:</b> {{ task.who_done }}</p>
+                {% else %}
+                    <p id="who_done_tsk_{{ task.id }}" style="display: none;"><b>Выполнил:</b> {{ task.who_done }}</p>
+                {% endif %}
+                <div style="height: 2px;"></div>
+            {% endfor %}
+            <a href="{% url 'project_detail' stat='editing' project_id=project.id %}"><button class ="btn btn-first">Редактировать</button></a>
+            <div style="height: 40px;"></div>
+            <form method="post" action="{% url 'project_detail' stat='reading' project_id=project.id %}">
+                {% csrf_token %}
+                {{ form_add.as_p }}
+                <input type="submit" class="btn btn-first" value="Добавить">
+            </form>
+            <br>
+        </div>
+    {% else %}
+        <div class="container">
+            <form method="post" action="{% url 'project_detail' stat='editing' project_id=project.id %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div id="tasks-container"></div>
+                <button type="button" class="btn btn-first" onclick="addTaskForm()">Добавить задание</button>
+                <input type="submit" class="btn btn-first" value="Применить">
+            </form>
+            <div style="height: 5px;"></div>
+            <a href="{% url 'project_detail' stat='reading' project_id=project.id %}"><button class ="btn btn-secondary">Отменить</button></a>
+        </div>
+    {% endif %}
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        // Функция для закрытия сообщения по ID
+        function closeMessage(messageId) {
+            const messageElement = document.getElementById(`message-${messageId}`);
+            if (messageElement) {
+                messageElement.style.display = 'none';
+            }
+        }
+
+        function createTaskForm(prefix){
+            const taskFormHtml = `
+                <div>
+                    <label for="id_tasks-${prefix}-text">Задание:</label>
+                    <input name="tasks-${prefix}-text">
+                    <br>
+                    <label>Описание:</label>
+                    <textarea name="tasks_description-${prefix}-text"></textarea>
+                </div>
+                <br>
+                <br>
+            `;
+            return taskFormHtml;
+        }
+
+        function addTaskForm() {
+            const tasksContainer = document.getElementById('tasks-container');
+            const nextIndex = tasksContainer.children.length;
+            const noteFormHtml = createTaskForm(nextIndex);
+            tasksContainer.insertAdjacentHTML('beforeend', noteFormHtml);
+        }
+
+        function toggleNoteDone(taskID) {
+            const checkbox = document.getElementById(`task_${taskID}`);
+            const name = document.getElementById(`name_tsk_${taskID}`);
+            const body = document.getElementById(`body_tsk_${taskID}`);
+            const done = checkbox.checked;
+
+            if (done) {
+                name.classList.add('completed');
+                body.classList.add('completed');
+            } else {
+                name.classList.remove('completed');
+                body.classList.remove('completed');
+            }
+
+            const csrftoken = getCookie('csrftoken');
+
+            axios({
+                method: 'patch',
+                url: `/update_task_cond/${taskID}/`,
+                data: { done },
+                headers: { 'X-CSRFToken': csrftoken }
+            })
+            .then(response => {
+                console.log(response.data);
+                const whoDoneParagraph = document.getElementById(`who_done_tsk_${taskID}`);
+                const whoDoneValue = response.data.who_done;
+                if (done) {
+                    whoDoneParagraph.innerHTML = `<b>Выполнил:</b> ${whoDoneValue}`;
+                    whoDoneParagraph.style.display = 'block';
+                } else {
+                    whoDoneParagraph.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Произошла ошибка при отправке запроса:', error);
+            });
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        window.onload = function() {
+            const messagesContainer = document.getElementById('messages-container');
+            messagesContainer.style.display = 'block';
+
+            const messages = messagesContainer.getElementsByClassName('alert');
+            Array.from(messages).forEach(message => {
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, 5000);
+            });
+        };
+    </script>
+</body>
+</html>

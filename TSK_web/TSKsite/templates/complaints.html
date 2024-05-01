@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Complaints</title>
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+            padding-top: 50px;
+            padding-bottom: 50px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            border-radius: 15px;
+            background-color: #ffffff;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #b71523;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .btn-first {
+            color: #ffffff;
+            background-color: #b71523;
+            border-color: #b71523;
+            margin: 0 auto;
+        }
+
+        .btn-first:hover {
+            color: #ffffff;
+            background-color: #850d1d;
+            border-color: #850d1d;
+        }
+
+        a {
+            text-decoration: none !important;
+        }
+
+
+        h3 a {
+            text-decoration: none !important;
+        }
+
+
+        h3 a:hover {
+            text-decoration: none !important;
+        }
+        #messages-container {
+            display: none;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div id="messages-container" class="messages-container">
+        {% if messages %}
+            {% for message in messages %}
+                <div id="message-{{ message.id }}" class="alert alert-{{ message.tags }}" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" aria-label="Close" onclick="closeMessage('{{ message.id }}')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% include 'bar.html' %}
+
+    {% if status == 0 %}
+        <h1>Ваши жалобы</h1>
+        <div style="text-align: center">
+            <a href="{% url 'create_complaint' %}"><input style="font-size: 1.5rem" type="button" value="Создать жалобу" class="btn btn-first"></a>
+        </div>
+        <br>
+    {% else %}
+        <h1>Жалобы пользователей</h1>
+    {% endif %}
+    <br>
+    {% for complaint in data %}
+        <div class="container">
+            <tr>
+                <th>Message: {{ complaint.text }}</th>
+                <br>
+                <th>User: {{ complaint.author }}</th>
+                <br>
+                <th>Time: {{ complaint.data }}</th>
+                <br>
+                <th>Answer: {{ complaint.answer }}</th>
+                <br>
+                {% if status == 1 and complaint.answer == '' %}
+                    <a href="{% url 'complaint_answer' complaint_id=complaint.id %}"><button class="btn btn-first">Ответить на жалобу</button></a>
+                {% endif %}
+                <br>
+            </tr>
+        </div>
+        <div style="height: 10px"></div>
+    {% endfor %}
+    <script>
+        window.onload = function() {
+        const messagesContainer = document.getElementById('messages-container');
+        messagesContainer.style.display = 'block';
+
+        const messages = messagesContainer.getElementsByClassName('alert');
+        Array.from(messages).forEach(message => {
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 5000);
+        });
+    };
+    </script>
+</body>
+</html>
