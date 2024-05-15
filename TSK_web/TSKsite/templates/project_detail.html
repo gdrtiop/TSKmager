@@ -223,6 +223,12 @@
                 }, 5000);
             });
         };
+        function closeMessage(messageId) {
+            var messageElement = document.getElementById('message-' + messageId);
+            if (messageElement) {
+                messageElement.remove();
+            }
+        }
     </script>
 </body>
 </html>

@@ -84,31 +84,37 @@
             {% endfor %}
         {% endif %}
     </div>
-{% include 'bar.html' %}
-<div class="container">
-    <h1>Welcome!!!</h1>
+    {% include 'bar.html' %}
+    <div class="container">
+        <h1>Welcome!!!</h1>
 
-    <p>Добро пожаловать на платформу TSKmager</p>
+        <p>Добро пожаловать на платформу TSKmager</p>
 
-    <p class="bold">Почему выбрать именно нас?</p>
+        <p class="bold">Почему выбрать именно нас?</p>
 
-    <p>TSKmager - это простой, функциональный и удобный инструмент для управления задачами, который поможет вам повысить свою продуктивность и эффективность.</p>
-    <p>Текущий пользователь: {{ user }}</p>
-    <a href="{% url 'login' %}"><button class="btn btn-first">Авторизация</button></a>
-    <a href="{% url 'register' %}"><button class="btn btn-first">Регистрация</button></a>
-</div>
+        <p>TSKmager - это простой, функциональный и удобный инструмент для управления задачами, который поможет вам повысить свою продуктивность и эффективность.</p>
+
+        <a href="{% url 'login' %}"><button class="btn btn-first">Авторизация</button></a>
+        <a href="{% url 'register' %}"><button class="btn btn-first">Регистрация</button></a>
+    </div>
     <script>
         window.onload = function() {
-        const messagesContainer = document.getElementById('messages-container');
-        messagesContainer.style.display = 'block';
+            const messagesContainer = document.getElementById('messages-container');
+            messagesContainer.style.display = 'block';
 
-        const messages = messagesContainer.getElementsByClassName('alert');
-        Array.from(messages).forEach(message => {
-            setTimeout(() => {
-                message.style.display = 'none';
-            }, 5000);
-        });
-    };
+            const messages = messagesContainer.getElementsByClassName('alert');
+            Array.from(messages).forEach(message => {
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, 5000);
+            });
+        };
+        function closeMessage(messageId) {
+            var messageElement = document.getElementById('message-' + messageId);
+            if (messageElement) {
+                messageElement.remove();
+            }
+        }
     </script>
 </body>
 </html>

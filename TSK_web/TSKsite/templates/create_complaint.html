@@ -90,16 +90,22 @@
     </div>
     <script>
         window.onload = function() {
-        const messagesContainer = document.getElementById('messages-container');
-        messagesContainer.style.display = 'block';
+            const messagesContainer = document.getElementById('messages-container');
+            messagesContainer.style.display = 'block';
 
-        const messages = messagesContainer.getElementsByClassName('alert');
-        Array.from(messages).forEach(message => {
-            setTimeout(() => {
-                message.style.display = 'none';
-            }, 5000);
-        });
-    };
+            const messages = messagesContainer.getElementsByClassName('alert');
+            Array.from(messages).forEach(message => {
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, 5000);
+            });
+        };
+        function closeMessage(messageId) {
+            var messageElement = document.getElementById('message-' + messageId);
+            if (messageElement) {
+                messageElement.remove();
+            }
+        }
     </script>
 </body>
 </html>

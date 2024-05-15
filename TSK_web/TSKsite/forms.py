@@ -130,7 +130,7 @@ class ComplaintForm(forms.ModelForm):
         model = Complaint
         fields = ['text']
         widgets = {
-            'text': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Название'}),
+            'text': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Ваше предложение или ваша жалоба'}),
         }
 
 
